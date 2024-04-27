@@ -1,0 +1,69 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+
+
+public class Program{
+    public static void AddStudent(SqlConnection connection,int studentId,string studentName, int studentAge, string studentGender, string studentMobileNumber,string studentEmail){
+        string strCommand = $"INSERT INTO STUDENT(StudentName,StudentAge,StudentGender,StudentMobileNumber,StudentEmail) VALUES('{studentName}',{studentAge},'{studentGender}','{studentMobileNumber}','{studentEmail}')";
+        SqlCommand cmd1 = new SqlCommand(strCommand,connection);
+        cmd1.ExecuteNonQuery(); 
+        Console.WriteLine("Student Added successfully!");
+        connection.Close();
+    }
+    public static void DisplayAllStudents(SqlConnection connection){
+        // connection.Open();
+        string strCommand = "SELECT * FROM Students";
+        SqlCommand cmd1 = new SqlCommand(strCommand,connection);
+        cmd1.ExecuteNonQuery();
+        SqlDataReader reader =  cmd1.ExecuteReader();
+        Console.WriteLine("Student Records:");
+        while (reader.Read())
+        {
+                Console.WriteLine($"{reader.GetInt32(0)}");
+                Console.WriteLine($"{reader.GetString(1)}");
+                Console.WriteLine($"{reader.GetInt32(2)}");
+                Console.WriteLine($"{reader.GetString(3)}");
+                Console.WriteLine($"{reader.GetString(4)}");
+                Console.WriteLine($"{reader.GetString(5)}");
+        }
+        // reader.Close();
+        connection.Close();
+
+    }
+   public static void Main(){
+    string sqlCon = "User ID=sa;password=examlyMssql@123;server=localhost;Database=appdb;trusted_connection=false;Persist Security Info=False;Encrypt=False;";
+    SqlConnection connection = new SqlConnection(sqlCon);
+    connection.Open();
+    Console.WriteLine("Connection successful!");
+
+    Console.WriteLine("1. Add Student");
+    Console.WriteLine("2. Display All Students");
+    int option = int.Parse(Console.ReadLine());
+    if(option == 1){
+        Console.WriteLine("Enter student details");
+        Console.Write("Student ID: ");
+        int id = int.Parse(Console.ReadLine());
+        Console.Write("Student Name: ");
+        string name = Console.ReadLine();
+        Console.Write("Student Age: ");
+        int age = int.Parse(Console.ReadLine());
+        Console.Write("Student Gender: ");
+        string gender = Console.ReadLine();
+        Console.Write("Student Mobile: ");
+        string mobile = Console.ReadLine();
+        Console.Write("Student Email: ");
+        string email = Console.ReadLine();
+        AddStudent(connection,id,name,age,gender,mobile,email);
+
+    } else if(option == 2){
+            DisplayAllStudents(connection);
+    } else{
+        Console.WriteLine("Invalid Option.");
+    }
+    connection.Close();
+
+}
+
+}
