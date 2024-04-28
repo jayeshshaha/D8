@@ -1,0 +1,93 @@
+using System;
+using System.Data;
+using System.Data.SqlClient;
+
+public class Program{
+    public static void AddProduct(
+        SqlConnection connection,
+        int id,
+        string name,
+        double rate,
+        int stock
+    ){
+        string strCmd = $"INSERT INTO Grocery(ID,Name,Rate,Stock) VALUES ({id},'{name}',{rate},{stock})";
+        SqlCommand cmd1 = new SqlCommand(strCmd,connection);
+        cmd1.ExecuteNonQuery();
+        Console.WriteLine("Product added successfully!");
+        connection.Close();
+    } 
+    public static void SearchProduct(
+        SqlConnection connection,
+        string searchName
+    ){
+        string strCmd = $"SELECT * FROM Grocery WHERE Name = {searchName}";
+        SqlCommand cmd1 = new SqlCommand(strCmd,connection);
+        cmd1.ExecuteNonQuery();
+        SqlDataReader reader = cmd1.ExecuteReader();
+        Console.WriteLine("Search results: ");
+        Console.WriteLine("GroceryID \t Name \t Rate \t Stock");
+        while (reader.Read())
+        {
+            Console.WriteLine($"{reader.GetInt32(0)} \t {reader.GetString(1)} \t {reader.GetDouble(2)} \t {reader.GetInt32(3)}}}");
+        }
+        connection.Close();
+    }
+
+    public static void EditProduct(
+        SqlConnection connection,
+        int productId,
+        string name,
+        double rate,
+        int stock
+    ){
+        string strCmd = $"UPDATE Grocery SET Name = {name}, Rate = {rate}, Stock = {stock} WHERE ID = {productId}";
+        SqlCommand cmd1 = new SqlCommand(strCmd,connection);
+        cmd1.ExecuteNonQuery();
+        Console.WriteLine("Product updated successfully!");
+        connection.Close();
+    }
+
+    public static void Main(){
+        string sqlCon = "User ID=sa;password=examlyMssql@123;server=localhost;Database=appdb;trusted_connection=false;Persist Security Info=False;Encrypt=False;";
+        SqlConnection connection = new SqlConnection(sqlCon);
+        connection.Open();
+        Console.WriteLine("Connection successful!");
+        Console.WriteLine("Select an option: ");
+        int option = int.Parse(Console.ReadLine());
+        switch (option){
+            case 1:{
+                Console.Write("ID: ");
+                int id = int.Parse(Console.ReadLine());
+                Console.Write("Name: ");
+                string name = Console.ReadLine();
+                Console.Write("Rate: ");
+                double rate = double.Parse(Console.ReadLine());
+                Console.Write("Stock: ");
+                int stock = int.Parse(Console.ReadLine());
+                AddProduct(connection,id,name,rate,stock);
+                break;
+            }
+            case 2:{
+                Console.Write("Enter the product name to search: ");
+                string searchName = Console.ReadLine();
+                SearchProduct(connection,searchName);
+                break;
+            }
+            case 3:{
+                Console.Write("Enter the ID of the product to edit: ");
+                int  productId = int.Parse(Console.ReadLine());
+                string name = Console.ReadLine();
+                Console.Write("Rate: ");
+                double rate = double.Parse(Console.ReadLine());
+                Console.Write("Stock: ");
+                int stock = int.Parse(Console.ReadLine());
+                EditProduct(connection,productId,name,rate,stock);
+                break;
+            }
+            default:
+            Console.WriteLine("Invalid option selected!");
+            break;
+        }
+        connection.Close();
+    }
+}
