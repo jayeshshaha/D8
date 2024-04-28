@@ -1,0 +1,63 @@
+using System;
+using System.Data;
+using System.Data.SqlClient;
+
+public class Program{
+    public static void AddEmployee(
+        SqlConnection connection,
+        int employeeId,
+        string employeeName,
+        string employeeEmail,
+        string employeePhoneNumber,
+        string employeeDepartment
+    ){
+        string sqlCmd =
+        $"INSERT INTO Employee(EmpName,Email,PhoneNumber,Department) VALUES ('{employeeName}','{employeeEmail}','{employeePhoneNumber}','{employeeDepartment}')";
+        SqlCommand cmd1 = new SqlCommand(sqlCmd,connection);
+        cmd1.ExecuteNonQuery();
+        Console.WriteLine("Employee added successfully!");
+        connection.Close();
+    }
+
+    public static void DeleteEmployee(
+        SqlConnection connection,
+        int employeeId
+    ){
+        string sqlCmd = $"DELETE FROM Employee WHERE EmpId = {employeeId}";
+        SqlCommand cmd1 = new SqlCommand(sqlCmd,connection);
+        cmd1.ExecuteNonQuery();    
+        Console.WriteLine("Employee deleted successfully!");
+        connection.Close();
+    }
+
+    public static void Main(){
+        string sqlCon = "User ID=sa;password=examlyMssql@123;server=localhost;Database=appdb;trusted_connection=false;Persist Security Info=False;Encrypt=False;";
+        SqlConnection connection = new SqlConnection(sqlCon);
+        connection.Open();
+        Console.WriteLine("Connection successful!");
+        Console.WriteLine("1. Add Employee");
+        Console.WriteLine("2. Delete Employee");
+        int option = int.Parse(Console.ReadLine());
+        if(option == 1){
+            Console.WriteLine("Enter employee details:");
+            Console.Write("Employee ID: ");
+            int employeeId = int.Parse(Console.ReadLine());
+            Console.Write("Employee Name: ");
+            string employeeName = Console.ReadLine();
+            Console.Write("Email: ");
+            string employeeEmail = Console.ReadLine();
+            Console.Write("Phone Number: ");
+            string employeePhoneNumber = Console.ReadLine();
+            Console.Write("Department: ");
+            string employeeDepartment = Console.ReadLine();
+            AddEmployee(connection,employeeId,employeeName,employeeEmail,employeePhoneNumber,employeeDepartment);
+        } else if(option == 2){
+            Console.Write("Enter Employee ID to delete: ");
+            int employeeId = int.Parse(Console.ReadLine());
+            DeleteEmployee(connection,employeeId);
+        } else{
+            Console.WriteLine("Invalid option selected!");
+        }
+        connection.Close();
+    }
+}
